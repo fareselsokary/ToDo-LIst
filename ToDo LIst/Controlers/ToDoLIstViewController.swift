@@ -55,7 +55,7 @@ class ToDoLIstViewController: UITableViewController {
             item.title = newItem.text!
             if item.title != ""{
                 self.listArray.append(item)
-                
+                self.saveData()
                 self.tableView.reloadData()
             }
             
@@ -70,7 +70,7 @@ class ToDoLIstViewController: UITableViewController {
         
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
-        self.saveData()
+        
     }
     //save persestant data
     func saveData(){
