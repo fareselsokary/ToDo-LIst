@@ -7,8 +7,8 @@
 //
 
 import Foundation
-class ItemList:Codable{
-    var title : String = ""
-    var done : Bool = false
-
-}
+//class ItemList:Codable{
+//    var title : String = ""
+//    var done : Bool = false
+//
+//}
