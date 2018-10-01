@@ -7,8 +7,9 @@
 //
 
 import Foundation
-//class ItemList:Codable{
-//    var title : String = ""
-//    var done : Bool = false
-//
-//}
+import RealmSwift
+class ItemList : Object {
+    @objc dynamic var title : String = ""
+    @objc dynamic var done : Bool = false
+    let parentCaegory = LinkingObjects(fromType: Category.self, property: "items")
+}
