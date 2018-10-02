@@ -15,12 +15,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-//        do{
-//            let realm = try Realm()
-//        }catch{
-//            print("error intilizing Realm\(error)")
-//        }
-//        
+        do{
+            _ = try Realm()
+        }catch{
+            print("error intilizing Realm\(error)")
+        }
+        
         return true
     }
     func applicationDidFinishLaunching(_ application: UIApplication) {

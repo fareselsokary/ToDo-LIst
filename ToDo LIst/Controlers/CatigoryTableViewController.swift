@@ -8,20 +8,42 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
+
 class CatigoryTableViewController: UITableViewController {
     var catigoryArray  : Results<Category>?
     let realm = try! Realm()
+    let color = UIColor.randomFlat.hexValue()
     override func viewDidLoad() {
         super.viewDidLoad()
         loadCategory()
-       
+        tableView.rowHeight = 80.0
+       updateUI(withHexCode: "0096FF")
     }
-
+    func updateUI(withHexCode hexColor : String){
+        guard let navBar = navigationController?.navigationBar else{fatalError("navigation controler doesnot exist")}
+        
+        guard let selectedCoategoryColor = UIColor(hexString: hexColor) else {fatalError()}
+        navBar.tintColor = ContrastColorOf(selectedCoategoryColor, returnFlat: true)
+        navBar.barTintColor = selectedCoategoryColor
+        navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor :ContrastColorOf(selectedCoategoryColor, returnFlat: true)]
+        
+        
+    }
     // MARK: - Table view data source
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath)
-        cell.textLabel?.text = catigoryArray?[indexPath.row].name ?? "No category add yet"
+        
+        if let category = catigoryArray?[indexPath.row]{
+            cell.textLabel?.text = category.name
+            guard let categoryColor = UIColor(hexString: category.color)else { fatalError()}
+            
+            cell.backgroundColor = categoryColor
+            cell.textLabel?.textColor = ContrastColorOf(categoryColor, returnFlat: true)
+            
+        }
+        
         return cell
     }
 
@@ -30,13 +52,22 @@ class CatigoryTableViewController: UITableViewController {
         return catigoryArray?.count ?? 1
     }
     
-    
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let delete = UIContextualAction(style: .destructive, title: "Delete") { (contexyualAction, view, action) in
+            self.deleteCategory(indexpath: indexPath)
+            self.tableView.deleteRows(at: [indexPath], with: .automatic)
+            action(true)
+        }
+        delete.image = UIImage(named: "trash")
+        return UISwipeActionsConfiguration(actions: [delete])
+    }
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
        var newCategory = UITextField()
         let alert = UIAlertController(title: "New category", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add Category", style: .default) { (action) in
             let category = Category()
             category.name = newCategory.text!
+            category.color = self.color
             if category.name != ""{
                 self.saveCategory(category: category)
                 self.tableView.reloadData()
@@ -85,6 +116,17 @@ class CatigoryTableViewController: UITableViewController {
         tableView.reloadData()
     }
     
+    func deleteCategory(indexpath : IndexPath){
+        if let deletedCategory = self.catigoryArray?[indexpath.row]{
+            do{
+                try self.realm.write {
+                    self.realm.delete(deletedCategory)
+                }
+            }catch{
+                print("error in category deletion\(error)")
+            }
+        }
+    }
     
     
  
